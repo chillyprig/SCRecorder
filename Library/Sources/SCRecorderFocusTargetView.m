@@ -93,34 +93,34 @@
     if (!([self.insideCircle.layer.animationKeys containsObject:kInsideCircleAnimationKey] && [self.outsideCircle.layer.animationKeys containsObject:kOutsideCircleAnimationKey])) {
         return;
     }
-    
-    [self.insideCircle.layer removeAnimationForKey:kInsideCircleAnimationKey];
-    [self.outsideCircle.layer removeAnimationForKey:kOutsideCircleAnimationKey];
-
-
-    
-    CABasicAnimation *scaleAniamtion = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-    scaleAniamtion.fromValue = [NSNumber numberWithFloat:1.0f];
-    scaleAniamtion.toValue = [NSNumber numberWithFloat:.0f];
-    
-    CAAnimationGroup *group = [CAAnimationGroup animation];
-    group.beginTime = CACurrentMediaTime() + 0.3;
-    group.fillMode = kCAFillModeForwards;
-    group.removedOnCompletion = NO;
-    group.duration = 0.3;
-    group.repeatCount = 1;
-    group.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
 
     if (![[self recorder] isLocked]) {
+        [self.insideCircle.layer removeAnimationForKey:kInsideCircleAnimationKey];
+        [self.outsideCircle.layer removeAnimationForKey:kOutsideCircleAnimationKey];
+
+
+
+        CABasicAnimation *scaleAniamtion = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+        scaleAniamtion.fromValue = [NSNumber numberWithFloat:1.0f];
+        scaleAniamtion.toValue = [NSNumber numberWithFloat:.0f];
+
         CABasicAnimation *fadeAnim=[CABasicAnimation animationWithKeyPath:@"opacity"];
         fadeAnim.fromValue=[NSNumber numberWithDouble:1.0];
         fadeAnim.toValue=[NSNumber numberWithDouble:0.0];
 
+        CAAnimationGroup *group = [CAAnimationGroup animation];
+        group.beginTime = CACurrentMediaTime() + 0.3;
+        group.fillMode = kCAFillModeForwards;
+        group.removedOnCompletion = NO;
+        group.duration = 0.3;
+        group.repeatCount = 1;
+        group.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        
         group.animations = [NSArray arrayWithObjects:scaleAniamtion, fadeAnim, nil];
+
+        [self.insideCircle.layer addAnimation:group forKey:kRemoveCircleAnimationKey];
+        [self.outsideCircle.layer addAnimation:group forKey:kRemoveCircleAnimationKey];
     }
-    
-    [self.insideCircle.layer addAnimation:group forKey:kRemoveCircleAnimationKey];
-    [self.outsideCircle.layer addAnimation:group forKey:kRemoveCircleAnimationKey];
 }
 
 - (void)layoutSubviews {

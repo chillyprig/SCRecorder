@@ -71,7 +71,8 @@ static char *ContextDidChangeDevice = "DidChangeDevice";
     [self addGestureRecognizer:_tapToFocusGesture];
 
     _holdToLockFocusGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(holdToLockFocus:)];
-    _holdToLockFocusGesture.minimumPressDuration = 0.7;
+    _holdToLockFocusGesture.minimumPressDuration = 1;
+    _holdToLockFocusGesture.cancelsTouchesInView = YES;
     _holdToLockFocusGesture.delegate = self;
 
     [self addGestureRecognizer:_holdToLockFocusGesture];
@@ -124,18 +125,20 @@ static char *ContextDidChangeDevice = "DidChangeDevice";
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    return YES;
+    return NO;
 }
 
 - (void)holdToLockFocus:(UIGestureRecognizer *)gestureRecognizer {
-    SCRecorder *recorder = self.recorder;
+    if (UIGestureRecognizerStateEnded == gestureRecognizer.state) {
+        SCRecorder *recorder = self.recorder;
 
-    if (recorder.focusSupported) {
-        recorder.isLocked = ![recorder isLocked];
-        CGPoint tapPoint = [gestureRecognizer locationInView:recorder.previewView];
-        CGPoint convertedFocusPoint = [recorder convertToPointOfInterestFromViewCoordinates:tapPoint];
-        self.cameraFocusTargetView.center = tapPoint;
-        [recorder autoFocusAtPoint:convertedFocusPoint];
+        if (recorder.focusSupported) {
+            recorder.isLocked = ![recorder isLocked];
+            CGPoint tapPoint = [gestureRecognizer locationInView:recorder.previewView];
+            CGPoint convertedFocusPoint = [recorder convertToPointOfInterestFromViewCoordinates:tapPoint];
+            self.cameraFocusTargetView.center = tapPoint;
+            [recorder autoFocusAtPoint:convertedFocusPoint];
+        }
     }
 }
 
