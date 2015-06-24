@@ -88,6 +88,8 @@
         [_photoConfiguration addObserver:self forKeyPath:@"options" options:NSKeyValueObservingOptionNew context:SCRecorderPhotoOptionsContext];
         
         _context = [SCContext new].CIContext;
+
+        self.isLocked = NO;
     }
     
     return self;
@@ -333,7 +335,9 @@
 }
 
 - (void)_subjectAreaDidChange {
-//    [self focusCenter];
+    if (![self isLocked]) {
+        [self focusCenter];
+    }
 }
 
 - (UIImage *)_imageFromSampleBufferHolder:(SCSampleBufferHolder *)sampleBufferHolder {
@@ -1107,13 +1111,17 @@
 // Perform an auto focus at the specified point. The focus mode will automatically change to locked once the auto focus is complete.
 - (void)autoFocusAtPoint:(CGPoint)point {
     [self _applyPointOfInterest:point continuousMode:NO];
-    [self lockFocus];
+    if (![self isLocked]) {
+        [self lockFocus];
+    }
 }
 
 // Switch to continuous auto focus mode at the specified point
 - (void)continuousFocusAtPoint:(CGPoint)point {
     [self _applyPointOfInterest:point continuousMode:YES];
-    [self lockFocus];
+    if (![self isLocked]) {
+        [self lockFocus];
+    }
 }
 
 - (void)focusCenter {

@@ -17,7 +17,7 @@
 
 @class SCRecorder;
 
-@interface SCRecorderToolsView : UIView
+@interface SCRecorderToolsView : UIView <UIGestureRecognizerDelegate>
 
 /**
  The instance of the SCRecorder to use.

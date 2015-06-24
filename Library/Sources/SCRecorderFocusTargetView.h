@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SCRecorder.h"
 
 @interface SCRecorderFocusTargetView : UIView
 
 @property (strong, nonatomic) UIImage *outsideFocusTargetImage;
 @property (strong, nonatomic) UIImage *insideFocusTargetImage;
+@property (strong, nonatomic) SCRecorder *recorder;
 @property (assign, nonatomic) float insideFocusTargetImageSizeRatio;
 
 - (void)startTargeting;

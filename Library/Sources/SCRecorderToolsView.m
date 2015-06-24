@@ -17,6 +17,7 @@
 @interface SCRecorderToolsView()
 {
     UITapGestureRecognizer *_tapToFocusGesture;
+    UILongPressGestureRecognizer *_holdToLockFocusGesture;
     UITapGestureRecognizer *_doubleTapToResetFocusGesture;
     UIPinchGestureRecognizer *_pinchZoomGesture;
     CGFloat _zoomAtStart;
@@ -61,13 +62,20 @@ static char *ContextDidChangeDevice = "DidChangeDevice";
     self.showsFocusAnimationAutomatically = YES;
     self.cameraFocusTargetView = [[SCRecorderFocusTargetView alloc] init];
     self.cameraFocusTargetView.hidden = YES;
+    self.cameraFocusTargetView.recorder = [self recorder];
     [self addSubview:self.cameraFocusTargetView];
     
     self.focusTargetSize = CGSizeMake(BASE_FOCUS_TARGET_WIDTH, BASE_FOCUS_TARGET_HEIGHT);
     
     _tapToFocusGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapToAutoFocus:)];
     [self addGestureRecognizer:_tapToFocusGesture];
-    
+
+    _holdToLockFocusGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(holdToLockFocus:)];
+    _holdToLockFocusGesture.minimumPressDuration = 0.7;
+    _holdToLockFocusGesture.delegate = self;
+
+    [self addGestureRecognizer:_holdToLockFocusGesture];
+
     _doubleTapToResetFocusGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapToContinouslyAutoFocus:)];
     _doubleTapToResetFocusGesture.numberOfTapsRequired = 2;
     [_tapToFocusGesture requireGestureRecognizerToFail:_doubleTapToResetFocusGesture];
@@ -112,6 +120,22 @@ static char *ContextDidChangeDevice = "DidChangeDevice";
         }
     } else if (context == ContextDidChangeDevice) {
         [self hideFocusAnimation];
+    }
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+}
+
+- (void)holdToLockFocus:(UIGestureRecognizer *)gestureRecognizer {
+    SCRecorder *recorder = self.recorder;
+
+    if (recorder.focusSupported) {
+        recorder.isLocked = ![recorder isLocked];
+        CGPoint tapPoint = [gestureRecognizer locationInView:recorder.previewView];
+        CGPoint convertedFocusPoint = [recorder convertToPointOfInterestFromViewCoordinates:tapPoint];
+        self.cameraFocusTargetView.center = tapPoint;
+        [recorder autoFocusAtPoint:convertedFocusPoint];
     }
 }
 

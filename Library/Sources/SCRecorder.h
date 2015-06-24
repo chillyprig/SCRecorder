@@ -233,6 +233,11 @@
 @property (readonly, nonatomic) dispatch_queue_t sessionQueue;
 
 /**
+ Store value for checking is focus locked
+ */
+@property (assign, nonatomic) BOOL isLocked;
+
+/**
  Create a recorder
  @return the newly created recorder
  */
