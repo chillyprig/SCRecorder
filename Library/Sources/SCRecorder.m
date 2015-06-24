@@ -333,7 +333,7 @@
 }
 
 - (void)_subjectAreaDidChange {
-    [self focusCenter];
+//    [self focusCenter];
 }
 
 - (UIImage *)_imageFromSampleBufferHolder:(SCSampleBufferHolder *)sampleBufferHolder {
