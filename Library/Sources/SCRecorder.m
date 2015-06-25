@@ -1111,7 +1111,7 @@
 // Perform an auto focus at the specified point. The focus mode will automatically change to locked once the auto focus is complete.
 - (void)autoFocusAtPoint:(CGPoint)point {
     [self _applyPointOfInterest:point continuousMode:NO];
-    if (![self isLocked]) {
+    if ([self isLocked]) {
         [self lockFocus];
     }
 }
@@ -1119,7 +1119,7 @@
 // Switch to continuous auto focus mode at the specified point
 - (void)continuousFocusAtPoint:(CGPoint)point {
     [self _applyPointOfInterest:point continuousMode:YES];
-    if (![self isLocked]) {
+    if ([self isLocked]) {
         [self lockFocus];
     }
 }
